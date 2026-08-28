@@ -1,0 +1,38 @@
+const mongoose = require('mongoose');
+
+const faqSchema = new mongoose.Schema(
+  {
+    question: {
+      type: String,
+      required: [true, 'Question is required'],
+      trim: true,
+    },
+    answer: {
+      type: String,
+      required: [true, 'Answer is required'],
+    },
+    keywords: [
+      {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+    ],
+    category: {
+      type: String,
+      default: 'General',
+      enum: ['General', 'Admission', 'Courses', 'Exams', 'Fees', 'Facilities'],
+    },
+    order: {
+      type: Number,
+      default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Faq', faqSchema);
