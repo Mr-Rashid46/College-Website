@@ -30,16 +30,6 @@ const AdminLogin = () => {
     }
   };
 
-  const autofillSuperAdmin = () => {
-    setEmail('admin@dbatu.ac.in');
-    setPassword('admin123');
-  };
-
-  const autofillEditor = () => {
-    setEmail('editor@dbatu.ac.in');
-    setPassword('editor123');
-  };
-
   return (
     <div className="min-h-screen bg-navy-950 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Subtle Background Pattern */}
@@ -114,29 +104,6 @@ const AdminLogin = () => {
               )}
             </button>
           </form>
-
-          {/* Quick Seeded Credentials Autofill Helper */}
-          <div className="pt-4 border-t border-slate-100 space-y-2">
-            <span className="text-[11px] font-semibold text-slate-400 block text-center uppercase tracking-wider">
-              Demo Credentials (Seeded)
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={autofillSuperAdmin}
-                className="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 px-2 rounded font-mono text-center border border-slate-200"
-              >
-                Super Admin
-              </button>
-              <button
-                type="button"
-                onClick={autofillEditor}
-                className="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 py-1.5 px-2 rounded font-mono text-center border border-slate-200"
-              >
-                Editor Role
-              </button>
-            </div>
-          </div>
 
         </div>
       </div>
