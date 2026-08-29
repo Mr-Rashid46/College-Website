@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -95,7 +96,19 @@ app.use('/api/faqs', faqRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/forms', formRoutes);
 
-// 404 Route Handler
+// Static client build serving & SPA Fallback Route Handler
+const clientDistPath = path.join(__dirname, '../client/dist');
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api') || req.originalUrl.startsWith('/uploads')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
+
+// 404 Handler for API / unmatched routes
 app.use((req, res, next) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });

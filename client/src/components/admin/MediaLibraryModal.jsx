@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Image, FileText, Upload, Check, X, Search, Trash2, Edit2, Link, Copy } from 'lucide-react';
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import API from '../../api/axios';
 
 const MediaLibraryModal = ({ isOpen, onClose, onSelectMedia, title = 'Media Library' }) => {
   const [mediaList, setMediaList] = useState([]);
@@ -14,14 +12,11 @@ const MediaLibraryModal = ({ isOpen, onClose, onSelectMedia, title = 'Media Libr
   const [selectedFile, setSelectedFile] = useState(null);
   const [notification, setNotification] = useState('');
 
-  const token = localStorage.getItem('token');
-
   const fetchMedia = async () => {
     if (!isOpen) return;
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/media`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await API.get('/media', {
         params: { search, type: typeFilter, limit: 30 },
       });
       if (res.data.success) {
@@ -48,9 +43,8 @@ const MediaLibraryModal = ({ isOpen, onClose, onSelectMedia, title = 'Media Libr
 
     try {
       setUploading(true);
-      const res = await axios.post(`${API_BASE_URL}/upload`, formData, {
+      const res = await API.post('/upload', formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -72,9 +66,7 @@ const MediaLibraryModal = ({ isOpen, onClose, onSelectMedia, title = 'Media Libr
   const handleDeleteMedia = async (id, name) => {
     if (!window.confirm(`Are you sure you want to delete "${name}"?`)) return;
     try {
-      await axios.delete(`${API_BASE_URL}/media/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.delete(`/media/${id}`);
       setMediaList((prev) => prev.filter((item) => item._id !== id));
     } catch (err) {
       alert('Failed to delete media asset');

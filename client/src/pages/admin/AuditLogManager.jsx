@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldAlert, Search, Filter, RefreshCw, Clock, User, FileText } from 'lucide-react';
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import API from '../../api/axios';
 
 const AuditLogManager = () => {
   const [logs, setLogs] = useState([]);
@@ -13,13 +11,10 @@ const AuditLogManager = () => {
   const [resourceFilter, setResourceFilter] = useState('');
   const [actionSearch, setActionSearch] = useState('');
 
-  const token = localStorage.getItem('token');
-
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/audit-logs`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await API.get('/audit-logs', {
         params: {
           page,
           limit: 25,

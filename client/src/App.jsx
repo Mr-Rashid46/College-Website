@@ -72,6 +72,7 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-use" element={<TermsOfUse />} />
+        <Route path="/:slug" element={<DynamicPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
 

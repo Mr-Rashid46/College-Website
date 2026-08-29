@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, ShieldCheck } from 'lucide-react';
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import API from '../../api/axios';
 
 const CaptchaChallenge = ({ onCaptchaChange }) => {
   const [captchaId, setCaptchaId] = useState('');
@@ -15,7 +13,7 @@ const CaptchaChallenge = ({ onCaptchaChange }) => {
     try {
       setLoading(true);
       setError('');
-      const res = await axios.get(`${API_BASE_URL}/contact/captcha`);
+      const res = await API.get('/contact/captcha');
       if (res.data.success) {
         setCaptchaId(res.data.captchaId);
         setQuestion(res.data.question);
