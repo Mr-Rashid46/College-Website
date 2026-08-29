@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+// const path = require('path');
+72904f8 (Add Cloudinary file storage)
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -48,7 +50,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
 
 // Static uploads directory serving
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // SEO routes (/sitemap.xml, /robots.txt)
 app.use('/', seoRoutes);

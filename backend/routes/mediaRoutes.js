@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('../config/cloudinary');
 const Media = require('../models/Media');
 const { protect } = require('../middleware/auth');
 const { logAuditEvent } = require('../middleware/auditMiddleware');
@@ -83,14 +82,30 @@ router.delete('/:id', protect, async (req, res) => {
     const media = await Media.findById(req.params.id);
 
     if (!media) {
-      return res.status(404).json({ success: false, message: 'Media file not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Media file not found',
+      });
     }
 
-    const filePath = path.join(__dirname, '../uploads', media.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Delete file from Cloudinary
+    if (media.publicId) {
+      try {
+        await cloudinary.uploader.destroy(
+          media.publicId,
+          {
+            resource_type: media.resourceType || 'image',
+          }
+        );
+      } catch (cloudinaryError) {
+        console.error(
+          'Cloudinary delete error:',
+          cloudinaryError
+        );
+      }
     }
 
+    // Delete database record
     await Media.findByIdAndDelete(req.params.id);
 
     await logAuditEvent({
@@ -101,9 +116,18 @@ router.delete('/:id', protect, async (req, res) => {
       details: `Deleted media file: ${media.originalName}`,
     });
 
-    res.json({ success: true, message: 'Media file deleted successfully' });
+    res.json({
+      success: true,
+      message: 'Media file deleted successfully',
+    });
+
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Delete media error:', error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
