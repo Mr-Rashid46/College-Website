@@ -9,6 +9,17 @@ const cloudinary = require('../config/cloudinary');
 const { logAuditEvent } = require('../middleware/auditMiddleware');
 
 
+// Determine the correct Cloudinary resource_type based on file mimetype
+const getCloudinaryResourceType = (mimetype) => {
+  if (mimetype.startsWith('image/')) return 'image';
+  if (mimetype === 'application/pdf') return 'raw';
+  if (
+    mimetype === 'application/msword' ||
+    mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ) return 'raw';
+  return 'auto';
+};
+
 // Generate a safe Cloudinary public ID
 const generatePublicId = (originalName) => {
   const ext = path.extname(originalName);
@@ -27,11 +38,12 @@ const generatePublicId = (originalName) => {
 const uploadToCloudinary = (file) => {
   return new Promise((resolve, reject) => {
     const publicId = generatePublicId(file.originalname);
+    const resourceType = getCloudinaryResourceType(file.mimetype);
 
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         public_id: publicId,
-        resource_type: 'auto',
+        resource_type: resourceType,
         folder: undefined,
       },
       (error, result) => {
