@@ -30,13 +30,17 @@ API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
+      const currentPath = window.location.hash
+        ? window.location.hash.replace('#', '')
+        : window.location.pathname;
+
       if (
-        window.location.pathname.startsWith('/admin') &&
-        window.location.pathname !== '/admin/login'
+        currentPath.startsWith('/admin') &&
+        currentPath !== '/admin/login'
       ) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/admin/login';
+        window.location.href = '#/admin/login';
       }
     }
 
